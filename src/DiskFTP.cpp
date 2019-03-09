@@ -81,8 +81,11 @@ bool ChooseAnImageFTP(int sx,int sy, char *ftp_dir, int slot, char **filename, b
 		if(!fonts_initialization()) return false;	//if we don't have a fonts, we just can do none
 	char tmpstr[512];
 	char ftpdirpath [MAX_PATH];
-	snprintf(ftpdirpath, MAX_PATH, "%s/%s%s", g_sFTPLocalDir, g_sFTPDirListing, md5str(ftp_dir));	// get path for FTP dir listing
-//	printf("Dir: %s, MD5(dir)=%s\n",ftp_dir,ftpdirpath);
+  char *ftpdirmd5;
+  ftpdirmd5 = md5str(ftp_dir);
+	snprintf(ftpdirpath, MAX_PATH, "%s/%s%s", g_sFTPLocalDir, g_sFTPDirListing, ftpdirmd5);	// get path for FTP dir listing
+	// printf("Dir: %s, MD5(dir)=%s [%p]\n",ftp_dir,ftpdirpath, md5str(ftp_dir));
+  free(ftpdirmd5);
 
 	List<char> files;		// our files
 	List<char> sizes;		// and their sizes (or 'dir' for directories)
@@ -556,6 +559,6 @@ md5str (const char *input)
 
 	for (i=0; i < 16; i++)
 		sprintf (result+2*i, "%02X", digest[i]);
-	return result;
+	return strndup(result, MAX_PATH);
 }
 
